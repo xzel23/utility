@@ -36,9 +36,10 @@ import java.util.Optional;
  * Bouncy Castle library for certificate generation and offers methods to specify certificate details such as
  * the subject and issuer, validity period, signature algorithm, and certificate chain.
  */
+@SuppressWarnings("java:S2143") // required by API
 final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder {
 
-    private static final @Nullable X509Certificate[] EMPTY_CERTIFICATE_ARRAY = {};
+    private static final X509Certificate[] EMPTY_CERTIFICATE_ARRAY = {};
 
     private final boolean enableCA;
     private @Nullable X500Principal subject;
@@ -152,6 +153,7 @@ final class BouncyCastleX509CertificateBuilder implements X509CertificateBuilder
 
             // Authority Key Identifier (if issuerCert is provided)
             if (issuerCert.length > 0) {
+                //noinspection DataFlowIssue - false positive
                 certBuilder.addExtension(Extension.authorityKeyIdentifier, false,
                         new AuthorityKeyIdentifier(LangUtil.map(issuerCert[0].getPublicKey(), PublicKey::getEncoded)));
             }

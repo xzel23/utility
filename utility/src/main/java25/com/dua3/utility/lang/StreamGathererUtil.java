@@ -34,6 +34,7 @@ public final class StreamGathererUtil {
      *                      and returns the updated group
      * @return a Gatherer that processes the stream into groups of consecutive elements based on the predicate
      */
+    @SuppressWarnings("java:S1452")
     public static <T, U> Gatherer<T, ?, U>
     groupConsecutive(
             Predicate<? super T> predicate,
@@ -41,9 +42,8 @@ public final class StreamGathererUtil {
             BiFunction<? super U, ? super T, ? extends U> accumulator
     ) {
         class State {
-            boolean currentGroupType;
-            @Nullable
-            U currentGroup;
+            boolean currentGroupType = false;
+            @Nullable U currentGroup;
         }
 
         return Gatherer.ofSequential(
@@ -132,11 +132,12 @@ public final class StreamGathererUtil {
      * @return a Gatherer that processes the stream into groups of consecutive elements based on the action
      * returned by the predicate
      */
+    @SuppressWarnings("java:S1452")
     public static <T, U> Gatherer<T, ?, U>
     filterAndGroupConsecutive(
             BiFunction<? super @Nullable T, ? super T, GroupingGathererAction> actionSelector,
             Supplier<? extends U> groupSupplier,
-            BiFunction<? super U, ? super T, ? extends U> accumulator
+            BiFunction<? super @Nullable U, ? super T, ? extends U> accumulator
     ) {
         class State {
             @Nullable

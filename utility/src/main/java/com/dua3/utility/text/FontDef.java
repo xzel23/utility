@@ -53,8 +53,8 @@ public final class FontDef {
     private @Nullable Boolean strikeThrough;
     private @Nullable FontType type;
 
-    private @Nullable String fontspec = null;
-    private @Nullable String cssStyle = null;
+    private @Nullable String fontspec;
+    private @Nullable String cssStyle;
 
     /**
      * Default constructor that creates a {FontDe} instance without any properties set.
@@ -298,6 +298,7 @@ public final class FontDef {
         return InternalUtil.decodeFontSize(sz);
     }
 
+    @SuppressWarnings("java:S4449") // false positive, s is non-null when used
     static @Nullable List<String> parseFontFamilies(@Nullable String s, boolean strict) {
         if (TextUtil.isNullOrBlank(s)) {
             return null;
@@ -404,14 +405,14 @@ public final class FontDef {
     /**
      * Skips characters in the given string starting from the specified index while the characters satisfy the given predicate.
      *
-     * @param s    the string to process
+     * @param cs    the string to process
      * @param idx  the starting index to check
      * @param end  the exclusive end index of the range to check
      * @param p    the predicate to test each character
      * @return the index of the first character that does not satisfy the predicate, or the end index if all characters satisfy the predicate
      */
-    private static int skipWhile(String s, int idx, int end, CharPredicate p) {
-        while (idx < end && p.test(s.charAt(idx))) {
+    private static int skipWhile(CharSequence cs, int idx, int end, CharPredicate p) {
+        while (idx < end && p.test(cs.charAt(idx))) {
             idx++;
         }
         return idx;
@@ -443,6 +444,7 @@ public final class FontDef {
      * @param b the second object to compare, may be null
      * @return true if either object is null or if the two objects are equal; false otherwise
      */
+    @SuppressWarnings("StandardVariableNames")
     private static boolean nullOrEquals(@Nullable Object a, @Nullable Object b) {
         return a == null || b == null || a.equals(b);
     }
@@ -452,13 +454,13 @@ public final class FontDef {
      *
      * @param <T> the type of the value to be consumed
      * @param v the value to be checked and potentially consumed
-     * @param c the consumer to execute if the value is not null
+     * @param consumer the consumer to execute if the value is not null
      * @return true if the value is not null and the consumer has been executed, false otherwise
      */
-    private static <T> boolean consumeIfDefined(@Nullable T v, Consumer<T> c) {
+    private static <T> boolean consumeIfDefined(@Nullable T v, Consumer<T> consumer) {
         boolean run = v != null;
         if (run) {
-            c.accept(v);
+            consumer.accept(v);
         }
         return run;
     }
@@ -503,6 +505,7 @@ public final class FontDef {
      * @param bold the value to set for the bold property. It can be true, false, or null to represent
      *             bold, non-bold, or unspecified respectively.
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setBold(@Nullable Boolean bold) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -523,6 +526,7 @@ public final class FontDef {
      *
      * @param color the color to set, which can be null
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setColor(@Nullable Color color) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -543,6 +547,7 @@ public final class FontDef {
      *
      * @param backgroundColor the background color to set, which can be null
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setBackgroundColor(@Nullable Color backgroundColor) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -572,6 +577,7 @@ public final class FontDef {
      *
      * @param families the font family names to set. Can be null if no font family is specified.
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setFamilies(@Nullable SequencedCollection<String> families) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -604,6 +610,7 @@ public final class FontDef {
      *
      * @param italic the value to set for the italic property. It can be null to indicate that the property is undefined.
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setItalic(@Nullable Boolean italic) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -624,6 +631,7 @@ public final class FontDef {
      *
      * @param size the font size in points. Can be null if the size is not defined.
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setSize(@Nullable Float size) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -647,6 +655,7 @@ public final class FontDef {
      *                       If {@code null}, the strike-through property
      *                       will not be explicitly set.
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setStrikeThrough(@Nullable Boolean strikeThrough) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -667,6 +676,7 @@ public final class FontDef {
      *
      * @param underline the underline attribute to set, or null to unset it
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setUnderline(@Nullable Boolean underline) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -687,6 +697,7 @@ public final class FontDef {
      *
      * @param type the type attribute to set, or null to unset it
      */
+    @SuppressWarnings("ParameterHidesMemberVariable")
     public void setType(@Nullable FontType type) {
         this.fontspec = null;
         this.cssStyle = null;
@@ -827,84 +838,84 @@ public final class FontDef {
     /**
      * Run action if a value for the color property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifColorDefined(Consumer<? super Color> c) {
-        consumeIfDefined(color, c);
+    public void ifColorDefined(Consumer<? super Color> consumer) {
+        consumeIfDefined(color, consumer);
     }
 
     /**
      * Run action if a value for the background color property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifBackgroundColorDefined(Consumer<? super Color> c) {
-        consumeIfDefined(backgroundColor, c);
+    public void ifBackgroundColorDefined(Consumer<? super Color> consumer) {
+        consumeIfDefined(backgroundColor, consumer);
     }
 
     /**
      * Run action if a value for the size property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifSizeDefined(Consumer<? super Float> c) {
-        return consumeIfDefined(size, c);
+    public boolean ifSizeDefined(Consumer<? super Float> consumer) {
+        return consumeIfDefined(size, consumer);
     }
 
     /**
      * Run action if a value for the family property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      * @return true, if the action was run
      */
-    public boolean ifFamiliesDefined(Consumer<List<String>> c) {
-        return consumeIfDefined(families, c);
+    public boolean ifFamiliesDefined(Consumer<List<String>> consumer) {
+        return consumeIfDefined(families, consumer);
     }
 
     /**
      * Run action if a value for the bold property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifBoldDefined(Consumer<? super Boolean> c) {
-        consumeIfDefined(bold, c);
+    public void ifBoldDefined(Consumer<? super Boolean> consumer) {
+        consumeIfDefined(bold, consumer);
     }
 
     /**
      * Run action if a value for the italic property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifItalicDefined(Consumer<? super Boolean> c) {
-        consumeIfDefined(italic, c);
+    public void ifItalicDefined(Consumer<? super Boolean> consumer) {
+        consumeIfDefined(italic, consumer);
     }
 
     /**
      * Run action if a value for the underline property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifUnderlineDefined(Consumer<? super Boolean> c) {
-        consumeIfDefined(underline, c);
+    public void ifUnderlineDefined(Consumer<? super Boolean> consumer) {
+        consumeIfDefined(underline, consumer);
     }
 
     /**
      * Run action if a value for the strike-through property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifStrikeThroughDefined(Consumer<? super Boolean> c) {
-        consumeIfDefined(strikeThrough, c);
+    public void ifStrikeThroughDefined(Consumer<? super Boolean> consumer) {
+        consumeIfDefined(strikeThrough, consumer);
     }
 
     /**
      * Run action if a value for the type property is defined.
      *
-     * @param c consumer to run if the attribute value is defined. It is called with the attribute value as argument
+     * @param consumer consumer to run if the attribute value is defined. It is called with the attribute value as argument
      */
-    public void ifTypeDefined(Consumer<? super FontType> c) {
-        consumeIfDefined(type, c);
+    public void ifTypeDefined(Consumer<? super FontType> consumer) {
+        consumeIfDefined(type, consumer);
     }
 
     /**
