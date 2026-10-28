@@ -60,7 +60,6 @@ public class FxDialogSample extends Application {
     static {
         ApplicationUtil.initApplicationPreferences(Preferences.userNodeForPackage(FxDialogSample.class));
         ApplicationUtil.addDarkModeListener(FxDialogSample::setDarkMode);
-        ApplicationUtil.setUiMode(UiMode.SYSTEM_DEFAULT);
     }
 
     private static final String ANSWER = "dua3.utility.samples.fx.answer";
