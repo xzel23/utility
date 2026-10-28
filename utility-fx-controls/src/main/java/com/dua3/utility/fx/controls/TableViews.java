@@ -18,13 +18,16 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -37,7 +40,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SequencedCollection;
 import java.util.function.Supplier;
 
@@ -107,7 +112,6 @@ public final class TableViews {
 
         ObservableList<S> items = FXCollections.observableArrayList(initialItems);
         TableView<S> tv = new TableView<>(items);
-        tv.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tv.getColumns().setAll(
                 columns.stream().map(cd -> {
                     TableColumn<S, Object> tc = new TableColumn<>(cd.text());
@@ -130,6 +134,7 @@ public final class TableViews {
                     return tc;
                 }).toList()
         );
+        configureColumnSizing(tv, columns);
 
         tv.setEditable(editable);
         tv.getSelectionModel().setSelectionMode(multiSelection ? SelectionMode.MULTIPLE : SelectionMode.SINGLE);
@@ -148,6 +153,112 @@ public final class TableViews {
 
         return tv;
     }
+
+    private static <S> void configureColumnSizing(
+            TableView<S> table,
+            SequencedCollection<? extends ColumnDef<S, ?>> columnDefinitions
+    ) {
+        table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+
+        List<? extends ColumnDef<S, ?>> definitions = List.copyOf(columnDefinitions);
+        Runnable resizeToAvailableWidth = () -> resizeColumnsToAvailableWidth(table, definitions);
+        Runnable resizeToContent = () -> {
+            resizeColumnsToContent(table, definitions);
+            resizeToAvailableWidth.run();
+        };
+
+        table.widthProperty().addListener((observable, oldWidth, newWidth) -> resizeToAvailableWidth.run());
+        table.skinProperty().addListener((observable, oldSkin, skin) -> {
+            if (skin != null) {
+                Platform.runLater(resizeToContent);
+            }
+        });
+        table.getItems().addListener((ListChangeListener<S>) change -> Platform.runLater(resizeToContent));
+    }
+
+    private static <S> void resizeColumnsToAvailableWidth(
+            TableView<S> table,
+            List<? extends ColumnDef<S, ?>> columnDefinitions
+    ) {
+        if (table.getWidth() <= 0.0) {
+            return;
+        }
+
+        List<ColumnWidth> columnWidths = new ArrayList<>(table.getColumns().size());
+        for (int i = 0; i < table.getColumns().size(); i++) {
+            TableColumn<S, ?> column = table.getColumns().get(i);
+            ColumnDef<S, ?> definition = columnDefinitions.get(i);
+            columnWidths.add(new ColumnWidth(
+                    column.getPrefWidth(), definition.minWidth(), definition.maxWidth(), definition.weight(), definition.resizable()
+            ));
+        }
+
+        double availableWidth = table.getWidth() - table.getInsets().getLeft() - table.getInsets().getRight();
+        List<Double> allocatedWidths = allocateColumnWidths(availableWidth, columnWidths);
+        for (int i = 0; i < table.getColumns().size(); i++) {
+            table.getColumns().get(i).setPrefWidth(allocatedWidths.get(i));
+        }
+    }
+
+    private static <S> void resizeColumnsToContent(
+            TableView<S> table,
+            List<? extends ColumnDef<S, ?>> columnDefinitions
+    ) {
+        Map<TableColumn<S, ?>, Double> requiredWidths = new HashMap<>();
+        for (int i = 0; i < table.getColumns().size(); i++) {
+            TableColumn<S, ?> column = table.getColumns().get(i);
+            Label header = new Label(columnDefinitions.get(i).text());
+            requiredWidths.put(column, header.prefWidth(-1) + 20.0);
+        }
+
+        for (var node : table.lookupAll(".table-cell")) {
+            if (node instanceof TableCell<?, ?> cell) {
+                @SuppressWarnings("unchecked")
+                TableColumn<S, ?> column = (TableColumn<S, ?>) cell.getTableColumn();
+                requiredWidths.computeIfPresent(column, (key, width) -> Math.max(width, cell.prefWidth(-1)));
+            }
+        }
+
+        for (TableColumn<S, ?> column : table.getColumns()) {
+            column.setPrefWidth(requiredWidths.get(column));
+        }
+    }
+
+    static List<Double> allocateColumnWidths(double availableWidth, List<ColumnWidth> columnWidths) {
+        List<Double> widths = columnWidths.stream()
+                .map(column -> Math.clamp(column.requiredWidth(), column.minWidth(), column.maxWidth()))
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        double shortage = widths.stream().mapToDouble(Double::doubleValue).sum() - Math.max(0.0, availableWidth);
+
+        while (shortage > 0.0) {
+            double totalWeight = 0.0;
+            for (int i = 0; i < widths.size(); i++) {
+                ColumnWidth column = columnWidths.get(i);
+                if (column.resizable() && column.weight() > 0.0 && widths.get(i) > column.minWidth()) {
+                    totalWeight += column.weight();
+                }
+            }
+            if (totalWeight == 0.0) {
+                break;
+            }
+
+            double reduction = 0.0;
+            for (int i = 0; i < widths.size(); i++) {
+                ColumnWidth column = columnWidths.get(i);
+                double width = widths.get(i);
+                if (column.resizable() && column.weight() > 0.0 && width > column.minWidth()) {
+                    double columnReduction = Math.min(width - column.minWidth(), shortage * column.weight() / totalWeight);
+                    widths.set(i, width - columnReduction);
+                    reduction += columnReduction;
+                }
+            }
+            shortage = Math.max(shortage - Math.max(reduction, 1.0e-9), 0.0);
+        }
+
+        return List.copyOf(widths);
+    }
+
+    record ColumnWidth(double requiredWidth, double minWidth, double maxWidth, double weight, boolean resizable) {}
 
     /**
      * A custom implementation of the {@link Callback} interface for creating and managing {@link TableRow} instances
