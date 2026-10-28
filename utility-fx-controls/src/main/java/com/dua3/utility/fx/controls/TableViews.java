@@ -108,6 +108,7 @@ public final class TableViews {
         boolean multiSelection = options.isEnabled(TableViewOptions.MULTIPLE_ROWS_SELECTABLE_OPTION);
         boolean allowDeletingRows = options.isEnabled(TableViewOptions.ALLOW_DELETING_ROWS_OPTION);
         boolean allowInsertingRows = options.isEnabled(TableViewOptions.ALLOW_INSERTING_ROWS_OPTION);
+        boolean fillWidth = options.isEnabled(TableViewOptions.FILL_WIDTH_OPTION);
         Supplier<S> itemFactory = (Supplier<S>) options.getParams(TableViewOptions.ALLOW_INSERTING_ROWS_OPTION).get(TableViewOptions.ITEM_FACTORY);
 
         ObservableList<S> items = FXCollections.observableArrayList(initialItems);
@@ -134,7 +135,7 @@ public final class TableViews {
                     return tc;
                 }).toList()
         );
-        configureColumnSizing(tv, columns);
+        configureColumnSizing(tv, columns, fillWidth);
 
         tv.setEditable(editable);
         tv.getSelectionModel().setSelectionMode(multiSelection ? SelectionMode.MULTIPLE : SelectionMode.SINGLE);
@@ -156,12 +157,13 @@ public final class TableViews {
 
     private static <S> void configureColumnSizing(
             TableView<S> table,
-            SequencedCollection<? extends ColumnDef<S, ?>> columnDefinitions
+            SequencedCollection<? extends ColumnDef<S, ?>> columnDefinitions,
+            boolean fillWidth
     ) {
         table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         List<? extends ColumnDef<S, ?>> definitions = List.copyOf(columnDefinitions);
-        Runnable resizeToAvailableWidth = () -> resizeColumnsToAvailableWidth(table, definitions);
+        Runnable resizeToAvailableWidth = () -> resizeColumnsToAvailableWidth(table, definitions, fillWidth);
         Runnable resizeToContent = () -> {
             resizeColumnsToContent(table, definitions);
             resizeToAvailableWidth.run();
@@ -178,7 +180,8 @@ public final class TableViews {
 
     private static <S> void resizeColumnsToAvailableWidth(
             TableView<S> table,
-            List<? extends ColumnDef<S, ?>> columnDefinitions
+            List<? extends ColumnDef<S, ?>> columnDefinitions,
+            boolean fillWidth
     ) {
         if (table.getWidth() <= 0.0) {
             return;
@@ -194,7 +197,7 @@ public final class TableViews {
         }
 
         double availableWidth = table.getWidth() - table.getInsets().getLeft() - table.getInsets().getRight();
-        List<Double> allocatedWidths = allocateColumnWidths(availableWidth, columnWidths);
+        List<Double> allocatedWidths = allocateColumnWidths(availableWidth, columnWidths, fillWidth);
         for (int i = 0; i < table.getColumns().size(); i++) {
             table.getColumns().get(i).setPrefWidth(allocatedWidths.get(i));
         }
@@ -225,10 +228,15 @@ public final class TableViews {
     }
 
     static List<Double> allocateColumnWidths(double availableWidth, List<ColumnWidth> columnWidths) {
+        return allocateColumnWidths(availableWidth, columnWidths, false);
+    }
+
+    static List<Double> allocateColumnWidths(double availableWidth, List<ColumnWidth> columnWidths, boolean fillWidth) {
         List<Double> widths = columnWidths.stream()
                 .map(column -> Math.clamp(column.requiredWidth(), column.minWidth(), column.maxWidth()))
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        double shortage = widths.stream().mapToDouble(Double::doubleValue).sum() - Math.max(0.0, availableWidth);
+        double available = Math.max(0.0, availableWidth);
+        double shortage = widths.stream().mapToDouble(Double::doubleValue).sum() - available;
 
         while (shortage > 0.0) {
             double totalWeight = 0.0;
@@ -253,6 +261,32 @@ public final class TableViews {
                 }
             }
             shortage = Math.max(shortage - Math.max(reduction, 1.0e-9), 0.0);
+        }
+
+        if (fillWidth) {
+            double surplus = available - widths.stream().mapToDouble(Double::doubleValue).sum();
+            while (surplus > 1.0e-9) {
+                double totalWeight = 0.0;
+                for (int i = 0; i < widths.size(); i++) {
+                    ColumnWidth column = columnWidths.get(i);
+                    if (column.resizable() && column.weight() > 0.0 && widths.get(i) < column.maxWidth()) {
+                        totalWeight += column.weight();
+                    }
+                }
+                if (totalWeight >= 0.0) {
+                    double increase = 0.0;
+                    for (int i = 0; i < widths.size(); i++) {
+                        ColumnWidth column = columnWidths.get(i);
+                        double width = widths.get(i);
+                        if (column.resizable() && column.weight() > 0.0 && width < column.maxWidth()) {
+                            double columnIncrease = Math.min(column.maxWidth() - width, surplus * column.weight() / totalWeight);
+                            widths.set(i, width + columnIncrease);
+                            increase += columnIncrease;
+                        }
+                    }
+                    surplus = Math.max(surplus - Math.max(increase, 1.0e-6), 0.0);
+                }
+            }
         }
 
         return List.copyOf(widths);

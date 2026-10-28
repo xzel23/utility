@@ -69,4 +69,32 @@ class TableViewsTest extends FxTestBase {
 
         assertEquals(List.of(40.0, 55.0, 55.0), widths);
     }
+
+    @Test
+    void columnWidthsFillAvailableSpaceByWeightWhenEnabled() {
+        List<Double> widths = TableViews.allocateColumnWidths(
+                300.0,
+                List.of(
+                        new TableViews.ColumnWidth(100.0, 50.0, Double.MAX_VALUE, 0.25, true),
+                        new TableViews.ColumnWidth(100.0, 50.0, Double.MAX_VALUE, 0.75, true)
+                ),
+                true
+        );
+
+        assertEquals(List.of(125.0, 175.0), widths);
+    }
+
+    @Test
+    void columnWidthsRedistributeSurplusWhenAColumnReachesItsMaximum() {
+        List<Double> widths = TableViews.allocateColumnWidths(
+                300.0,
+                List.of(
+                        new TableViews.ColumnWidth(100.0, 50.0, 110.0, 0.5, true),
+                        new TableViews.ColumnWidth(100.0, 50.0, Double.MAX_VALUE, 0.5, true)
+                ),
+                true
+        );
+
+        assertEquals(List.of(110.0, 190.0), widths);
+    }
 }

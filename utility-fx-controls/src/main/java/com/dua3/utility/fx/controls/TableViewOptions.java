@@ -14,6 +14,7 @@ import java.util.function.Supplier;
  * <ul>
  *     <li>READ_ONLY: Makes the table view read-only, preventing any editing of its content.</li>
  *     <li>DRAGGABLE_ROWS: Enables row reordering within the table view through drag-and-drop.</li>
+ *     <li>FILL_WIDTH: Expands resizable columns to fill the available table width.</li>
  * </ul>
  *
  * Instances of this class are immutable and can be created using the
@@ -54,6 +55,7 @@ public final class TableViewOptions {
     static final String MULTIPLE_ROWS_SELECTABLE_OPTION = "MULTIPLE_ROWS_SELECTABLE";
     static final String ALLOW_DELETING_ROWS_OPTION = "ALLOW_DELETING_ROWS";
     static final String ALLOW_INSERTING_ROWS_OPTION = "ALLOW_INSERTING_ROWS";
+    static final String FILL_WIDTH_OPTION = "FILL_WIDTH";
 
     /** Make the TableView editable. */
     public static final Option EDITABLE = new Option(EDITABLE_OPTION);
@@ -67,6 +69,8 @@ public final class TableViewOptions {
     public static final Option MULTIPLE_ROWS_SELECTABLE = new Option(MULTIPLE_ROWS_SELECTABLE_OPTION);
     /** Allow deleting rows. */
     public static final Option ALLOW_DELETING_ROWS = new Option(ALLOW_DELETING_ROWS_OPTION);
+    /** Expand resizable columns to fill the available table width according to their weights. */
+    public static final Option FILL_WIDTH = new Option(FILL_WIDTH_OPTION);
 
     /**
      * Allow inserting rows.
