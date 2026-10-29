@@ -26,11 +26,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 class WebViewsTest {
 
     @BeforeAll
     static void initJavaFx() throws Exception {
+        assumeFalse(isWindowsOnArm(), "JavaFX Web is not available on Windows ARM");
+
         CountDownLatch latch = new CountDownLatch(1);
         try {
             Platform.startup(latch::countDown);
@@ -38,6 +41,12 @@ class WebViewsTest {
             latch.countDown();
         }
         assertTrue(latch.await(10, TimeUnit.SECONDS));
+    }
+
+    private static boolean isWindowsOnArm() {
+        String osName = System.getProperty("os.name", "");
+        String osArch = System.getProperty("os.arch", "");
+        return osName.startsWith("Windows") && (osArch.equalsIgnoreCase("aarch64") || osArch.equalsIgnoreCase("arm64"));
     }
 
     static class MockJSObject extends JSObject {
