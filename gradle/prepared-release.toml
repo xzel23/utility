@@ -1,0 +1,59 @@
+[release]
+schemaVersion = 1
+releaseType = "patch"
+bomVersion = "25.2.1"
+sourceRevision = "0f9bba44e6b7badaca32bec093a0b348d0617eb9"
+
+[modules.utility]
+version = "25.2.0"
+sourceRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
+selected = false
+reason = "retained published module"
+
+[modules.utility-db]
+version = "25.2.0"
+sourceRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
+selected = false
+reason = "retained published module"
+
+[modules.utility-swing]
+version = "25.2.0"
+sourceRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
+selected = false
+reason = "retained published module"
+
+[modules.utility-fx]
+version = "25.2.0"
+sourceRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
+selected = false
+reason = "retained published module"
+
+[modules.utility-fx-icons]
+version = "25.2.0"
+sourceRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
+selected = false
+reason = "retained published module"
+
+[modules.utility-fx-icons-ikonli]
+version = "25.2.0"
+sourceRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
+selected = false
+reason = "retained published module"
+
+[modules.utility-fx-controls]
+version = "25.2.1"
+sourceRevision = "0f9bba44e6b7badaca32bec093a0b348d0617eb9"
+selected = true
+reason = "direct source change"
+
+[modules.utility-fx-db]
+version = "25.2.0"
+sourceRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
+selected = false
+reason = "retained published module"
+
+[modules.utility-fx-web]
+version = "25.2.1"
+sourceRevision = "0f9bba44e6b7badaca32bec093a0b348d0617eb9"
+selected = true
+reason = "direct source change"
