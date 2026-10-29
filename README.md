@@ -235,6 +235,12 @@ could not be loaded.
 
 ## Changes
 
+## 25.2.1
+
+- fix automatic column sizing in TableViews (fx-controls); introduce TableViews.FILL_WIDTH
+- fix race condition in FxDialogSample initialization that prevents the sample from running
+- update Gradle wrapper, dependencies
+
 ## 25.2.0
 
 - BREAKING: removed unused `existingOnly` argument from FileInputBuilder constructor and InputBuilder methods.
