@@ -137,6 +137,28 @@ class HtmlConverterTest {
     }
 
     @Test
+    void testParagraphRemainsProperlyNestedWithinCrossingFontStyle() {
+        Style arial = Style.create("arial", FontUtil.getInstance().getFont("Arial-9").toFontDef());
+        String paragraph = "Beiden Wertangaben sind vorhandene Überschusswerte nicht berücksichtigt; sie erhöhen noch die angegebenen Tabellenwerte.";
+        RichTextBuilder builder = new RichTextBuilder();
+        builder.push(arial);
+        builder.append("prefix ");
+        builder.push("paragraph", true);
+        builder.append(paragraph);
+        builder.pop("paragraph");
+        builder.append(" suffix");
+        builder.pop(arial);
+
+        String html = HtmlConverter.create(
+                HtmlConverter.mapAttribute("paragraph", ignored -> HtmlTag.tag("<div class=\"paragraph\">", "</div>"))
+        ).convert(builder.toRichText());
+
+        String fontSpan = "<span style='font-family: Arial; font-size: 9.0pt; font-weight: normal; font-style: normal; color: #000000;'>";
+        assertEquals(fontSpan + "prefix </span><div class=\"paragraph\">" + fontSpan
+                + TextUtil.escapeHtml(paragraph) + "</span></div>" + fontSpan + " suffix</span>", html);
+    }
+
+    @Test
     void testFontCss() {
         Font arial = FontUtil.getInstance().getFont("arial-16-bold");
         Font times = FontUtil.getInstance().getFont("courier-12");
