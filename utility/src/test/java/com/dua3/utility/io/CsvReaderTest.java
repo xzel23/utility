@@ -67,6 +67,19 @@ class CsvReaderTest {
     }
 
     @Test
+    void testReadCsv_unterminatedQuoteAfterValidRow() throws IOException {
+        List<List<String>> actualRows = new ArrayList<>();
+        CsvReader.RowBuilder rowBuilder = new CsvReader.ListRowBuilder(actualRows::add);
+        try (BufferedReader reader = new BufferedReader(new StringReader("a,b\nc,\"unterminated\ncontinued"));
+             CsvReader csvReader = CsvReader.create(rowBuilder, reader, Arguments.of(
+                     Arguments.createEntry(CsvReader.READ_COLUMN_NAMES, false)))) {
+            CsvFormatException exception = assertThrows(CsvFormatException.class, csvReader::readAll);
+            assertEquals("[3] Unexpected end of input while looking for matching delimiter.", exception.getMessage());
+            assertEquals(List.of(List.of("a", "b")), actualRows);
+        }
+    }
+
+    @Test
     void testReadCsvFromInputStream() throws IOException {
         Arguments arguments = Arguments.of(
                 Arguments.createEntry(CsvReader.READ_COLUMN_NAMES, true),
@@ -102,7 +115,7 @@ class CsvReaderTest {
 
     @Test
     void testReadCsvWithBom() throws IOException {
-        byte[] bom = new byte[]{(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
+        byte[] bom = {(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
         byte[] csvBytes = "A,B\n1,2\n".getBytes(StandardCharsets.UTF_8);
         byte[] withBom = new byte[bom.length + csvBytes.length];
         System.arraycopy(bom, 0, withBom, 0, bom.length);

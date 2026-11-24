@@ -348,7 +348,7 @@ public final class CsvReader extends CsvIo {
      */
     public void readColumnNames() throws IOException {
         ListRowBuilder rb = new ListRowBuilder();
-        readRow(rb);
+        readRow(rb, patternField.matcher(""));
         columnNames = rb.getRow();
     }
 
@@ -359,7 +359,7 @@ public final class CsvReader extends CsvIo {
      * reached
      * @throws IOException if an error occurs during reading
      */
-    private int readRow(RowBuilder rb) throws IOException {
+    private int readRow(RowBuilder rb, Matcher matcher) throws IOException {
         String line = reader.readLine();
 
         if (line == null) {
@@ -370,7 +370,7 @@ public final class CsvReader extends CsvIo {
 
         rb.startRow();
         int columnNr = 0;
-        Matcher matcher = patternField.matcher(line);
+        matcher.reset(line);
         while (matcher.lookingAt()) {
             // group 1 refers to a quoted field, group 2 to an unquoted field
             // since we have a match, either group 1 or group 2 matches and
@@ -394,7 +394,7 @@ public final class CsvReader extends CsvIo {
 
                 lineNumber++;
                 line = matcher.group(3) + "\n" + nextLine;
-                matcher = patternField.matcher(line);
+                matcher.reset(line);
                 continue;
             }
 
@@ -434,9 +434,10 @@ public final class CsvReader extends CsvIo {
      * @throws CsvFormatException if the data read can not be correctly interpreted
      */
     private int readRows(int maxRows) throws IOException {
+        Matcher matcher = patternField.matcher("");
         int read = 0;
         while (maxRows == 0 || read < maxRows) {
-            if (readRow(rowBuilder) < 0) {
+            if (readRow(rowBuilder, matcher) < 0) {
                 break;
             }
             read++;

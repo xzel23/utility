@@ -53,6 +53,16 @@ class TextUtilTest {
     }
 
     @Test
+    void testIsWhitespaceOnlyRun() {
+        String text = "a \t\u00A0\u2003\uD83D\uDE00b";
+        TextAttributes attributes = TextAttributes.none();
+        Assertions.assertTrue(TextUtil.isWhitespaceOnly(new Run(text, 1, 0, attributes)));
+        Assertions.assertTrue(TextUtil.isWhitespaceOnly(new Run(text, 1, 4, attributes)));
+        Assertions.assertFalse(TextUtil.isWhitespaceOnly(new Run(text, 1, 6, attributes)));
+        Assertions.assertFalse(TextUtil.isWhitespaceOnly(new Run(text, 1, 5, attributes)));
+    }
+
+    @Test
     void testBase64EncodingDecoding() {
         byte[] data = "Hello, World!".getBytes(StandardCharsets.UTF_8);
         char[] encodedChars = TextUtil.base64EncodeToChars(data);
@@ -658,6 +668,18 @@ class TextUtilTest {
         Assertions.assertEquals(3, TextUtil.indexOf("Hello", "lo", 0));
         Assertions.assertEquals(-1, TextUtil.indexOf("Hello", "He", 1));
         Assertions.assertEquals(-1, TextUtil.indexOf("Hello", "hi", 0));
+    }
+
+    @Test
+    void testIndexOfCharSequenceOffsets() {
+        Assertions.assertEquals(3, TextUtil.indexOf("ab ab", "ab", 1));
+        Assertions.assertEquals(3, TextUtil.indexOf(new StringBuilder("ab ab"), "ab", 1));
+        Assertions.assertEquals(3, TextUtil.indexOf("ab ab", new StringBuilder("ab"), 1));
+        Assertions.assertEquals(2, TextUtil.indexOf("ab", "", 2));
+        Assertions.assertEquals(-1, TextUtil.indexOf("ab", "", 3));
+        Assertions.assertEquals(-2, TextUtil.indexOf("ab", "", -2));
+        Assertions.assertEquals(-1, TextUtil.indexOf("ab", "abcde", -1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> TextUtil.indexOf("ab", "a", -1));
     }
 
     @Test

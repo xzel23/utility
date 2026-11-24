@@ -738,6 +738,9 @@ public final class TextUtil {
      */
     public static int indexOf(CharSequence haystack, CharSequence needle, int fromIndex) {
         final int haystackLength = haystack.length();
+        if (fromIndex >= 0 && fromIndex <= haystackLength && haystack instanceof String s && needle instanceof String n) {
+            return s.indexOf(n, fromIndex);
+        }
         final int needleLength = needle.length();
 
         for (int pos = fromIndex; pos < haystackLength - needleLength + 1; pos++) {
@@ -1433,6 +1436,16 @@ public final class TextUtil {
      * @return {@code true} if the CharSequence is blank, {@code false} otherwise
      */
     public static boolean isWhitespaceOnly(CharSequence cs) {
+        if (cs instanceof Run run) {
+            for (int i = 0, length = run.length(); i < length; ) {
+                int cp = Character.codePointAt(run, i);
+                if (!Character.isWhitespace(cp) && !Character.isSpaceChar(cp)) {
+                    return false;
+                }
+                i += Character.charCount(cp);
+            }
+            return true;
+        }
         return cs.codePoints().allMatch(cp -> Character.isWhitespace(cp) || Character.isSpaceChar(cp));
     }
 
