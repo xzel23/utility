@@ -50,10 +50,10 @@ import javafx.css.StyleableProperty;
 import javafx.css.converter.PaintConverter;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ColorPicker;
@@ -1154,7 +1154,8 @@ public class TextPane extends Control implements RichTextPane {
 
         private final RichTextTableHelper.Table table;
         private final float availableWidth;
-        private final Canvas canvas = new Canvas();
+        private final TiledCanvas canvas = new TiledCanvas();
+        private Rectangle2D viewport = Rectangle2D.EMPTY;
         private Font tableFont = FONT_UTIL.getDefaultFont();
 
         private TableNode(RichTextTableHelper.Table table, float availableWidth) {
@@ -1181,13 +1182,15 @@ public class TextPane extends Control implements RichTextPane {
         @Override
         protected void layoutChildren() {
             RichTextTableHelper.TableLayout layout = tableLayout();
-            canvas.setWidth(Math.max(1.0, layout.bounds().width()));
-            canvas.setHeight(Math.max(1.0, layout.bounds().height()));
-            canvas.relocate(0.0, 0.0);
-            try (Graphics graphics = new FxGraphics(canvas)) {
-                graphics.reset();
-                RichTextTableRenderer.render(graphics, layout);
-            }
+            canvas.resize(Math.max(1.0, layout.bounds().width()), Math.max(1.0, layout.bounds().height()));
+            canvas.setPainter((graphics, tile) -> RichTextTableRenderer.render(graphics, layout));
+            canvas.paint(viewport);
+        }
+
+        private void paintVisibleTiles(Rectangle2D contentViewport) {
+            viewport = new Rectangle2D(contentViewport.getMinX() - getLayoutX(), contentViewport.getMinY() - getLayoutY(),
+                    contentViewport.getWidth(), contentViewport.getHeight());
+            canvas.paint(viewport);
         }
 
         private RichTextTableHelper.TableLayout tableLayout() {
@@ -1536,7 +1539,7 @@ public class TextPane extends Control implements RichTextPane {
         private static final Float[] DEFAULT_FONT_SIZES = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f, 24.0f, 28.0f, 32.0f, 36.0f, 40.0f, 48.0f, 56.0f, 64.0f};
         private final Pane contentPane = new Pane();
         private final Pane selectionLayer = new Pane();
-        private final Canvas canvas = new Canvas();
+        private final TiledCanvas canvas = new TiledCanvas();
         private final Pane inlineLayer = new Pane();
         private final Pane caretLayer = new Pane();
         private final Group scrollContent = new Group(contentPane);
@@ -1750,7 +1753,11 @@ public class TextPane extends Control implements RichTextPane {
             control.selectableProperty().addListener((obs, oldVal, newVal) -> invalidate());
             control.selection.addListener((obs, oldVal, newVal) -> invalidate());
             control.focusedProperty().addListener((obs, oldVal, newVal) -> updateCaretAnimationState());
-            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> invalidate());
+            scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
+                invalidate();
+                paintVisibleTiles();
+            });
+            registerChangeListener(contentPane.localToSceneTransformProperty(), obs -> paintVisibleTiles());
 
             if (editor != null) {
                 caretVisibilityRequested = true;
@@ -2323,6 +2330,26 @@ public class TextPane extends Control implements RichTextPane {
         protected void layoutChildren(double contentX, double contentY, double contentWidth, double contentHeight) {
             super.layoutChildren(contentX, contentY, contentWidth, contentHeight);
             refreshIfNeeded();
+            paintVisibleTiles();
+        }
+
+        private void paintVisibleTiles() {
+            Node viewportNode = scrollPane.lookup(".viewport");
+            if (viewportNode == null || viewportNode.getScene() == null) {
+                return;
+            }
+            Bounds viewportBounds = contentPane.sceneToLocal(viewportNode.localToScene(viewportNode.getLayoutBounds()));
+            if (viewportBounds == null) {
+                return;
+            }
+            Rectangle2D viewport = new Rectangle2D(viewportBounds.getMinX(), viewportBounds.getMinY(),
+                    viewportBounds.getWidth(), viewportBounds.getHeight());
+            canvas.paint(viewport);
+            for (Node node : inlineLayer.getChildren()) {
+                if (node instanceof TableNode tableNode) {
+                    tableNode.paintVisibleTiles(viewport);
+                }
+            }
         }
 
         @Override
@@ -2401,12 +2428,12 @@ public class TextPane extends Control implements RichTextPane {
             RichTextPaneLayoutHelper.Layout<InlineControlPlacement> layout = control.createLayout(availableWidth);
             double previousCanvasHeight = canvas.getHeight();
 
-            canvas.setWidth(Math.max(1.0, Math.ceil(layout.width())));
+            double layoutWidth = Math.max(1.0, Math.ceil(layout.width()));
             double layoutHeight = Math.max(1.0, Math.ceil(layout.height()));
             if (preserveContentHeight) {
                 layoutHeight = Math.max(layoutHeight, previousCanvasHeight);
             }
-            canvas.setHeight(layoutHeight);
+            canvas.resize(layoutWidth, layoutHeight);
             contentPane.setMinSize(canvas.getWidth(), canvas.getHeight());
             contentPane.setPrefSize(canvas.getWidth(), canvas.getHeight());
             contentPane.resize(canvas.getWidth(), canvas.getHeight());
@@ -2448,23 +2475,30 @@ public class TextPane extends Control implements RichTextPane {
                 caretVisibilityRequested = false;
             }
 
-            try (Graphics graphics = new FxGraphics(canvas)) {
-                graphics.reset();
-                graphics.setFont(control.getTextFont().scaled((float) control.getDisplayScale()));
-                renderBlockDecorations(graphics, layout.renderLines(), (float) layout.width(), control.getDisplayScale());
-                RichTextRenderer.renderFragmentLines(graphics, layout.renderLines(), TextPaneSkin::isInvisibleInlinePlaceholder);
-            }
+            List<BlockDecorationArea> decorations = blockDecorationAreas(layout.renderLines());
+            double displayScale = control.getDisplayScale();
+            Font font = control.getTextFont().scaled((float) displayScale);
+            canvas.setPainter((graphics, tile) -> {
+                graphics.setFont(font);
+                for (BlockDecorationArea area : decorations) {
+                    renderBlockDecoration(graphics, area, (float) layout.width(), displayScale);
+                }
+                var lines = layout.renderLines().stream().filter(line -> lineIntersectsTile(line, tile)).toList();
+                RichTextRenderer.renderFragmentLines(graphics, lines, TextPaneSkin::isInvisibleInlinePlaceholder);
+            });
         }
 
-        private static void renderBlockDecorations(
-                Graphics graphics,
-                List<List<FragmentedText.Fragment>> lines,
-                float contentWidth,
-                double displayScale
-        ) {
-            for (BlockDecorationArea area : blockDecorationAreas(lines)) {
-                renderBlockDecoration(graphics, area, contentWidth, displayScale);
+        private static boolean lineIntersectsTile(List<FragmentedText.Fragment> line, Rectangle2D tile) {
+            // Allow for glyph overhang and fonts with different ascents sharing a baseline.
+            double top = Double.POSITIVE_INFINITY;
+            double bottom = Double.NEGATIVE_INFINITY;
+            double padding = 0.0;
+            for (FragmentedText.Fragment fragment : line) {
+                top = Math.min(top, fragment.y());
+                bottom = Math.max(bottom, fragment.y() + fragment.h());
+                padding = Math.max(padding, Math.max(fragment.h(), fragment.font().getAscent()));
             }
+            return top - padding < tile.getMaxY() && bottom + padding > tile.getMinY();
         }
 
         /**
@@ -2722,7 +2756,7 @@ public class TextPane extends Control implements RichTextPane {
             VisualLine line = lines.get(lineIndex);
             double requiredHeight = Math.ceil(line.top() + line.height());
             if (requiredHeight > canvas.getHeight()) {
-                canvas.setHeight(requiredHeight);
+                canvas.resize(canvas.getWidth(), requiredHeight);
                 contentPane.setMinHeight(requiredHeight);
                 contentPane.setPrefHeight(requiredHeight);
                 contentPane.resize(canvas.getWidth(), requiredHeight);
