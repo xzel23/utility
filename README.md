@@ -235,6 +235,11 @@ could not be loaded.
 
 ## Changes
 
+## 25.2.2
+
+- update plugins, dependencies (bouncycastle fixed several CVEs)
+- small fixes and improvements
+
 ## 25.2.1
 
 - fix automatic column sizing in TableViews (fx-controls); introduce TableViews.FILL_WIDTH
