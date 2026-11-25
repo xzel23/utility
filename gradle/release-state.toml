@@ -1,11 +1,11 @@
 [release]
 schemaVersion = 2
-bomVersion = "25.2.1"
-publishedRevision = "0f9bba44e6b7badaca32bec093a0b348d0617eb9"
+bomVersion = "25.2.2"
+publishedRevision = "8bc15d4237a3a13b20a917cae2c859523d1509b7"
 
 [modules.utility]
-version = "25.2.0"
-publishedRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
+version = "25.2.2"
+publishedRevision = "8bc15d4237a3a13b20a917cae2c859523d1509b7"
 paths = ["utility"]
 
 [modules.utility-db]
@@ -34,8 +34,8 @@ publishedRevision = "011b50fc7630af0979bf39a568cb624364a947d1"
 paths = ["utility-fx-icons-ikonli"]
 
 [modules.utility-fx-controls]
-version = "25.2.1"
-publishedRevision = "0f9bba44e6b7badaca32bec093a0b348d0617eb9"
+version = "25.2.2"
+publishedRevision = "8bc15d4237a3a13b20a917cae2c859523d1509b7"
 paths = ["utility-fx-controls"]
 
 [modules.utility-fx-db]
