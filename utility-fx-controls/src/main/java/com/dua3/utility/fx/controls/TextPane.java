@@ -23,13 +23,13 @@ import com.dua3.utility.text.ToRichText;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
 import com.dua3.utility.ui.HAnchor;
-import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.IndexRange;
+import com.dua3.utility.ui.InlineNode;
 import com.dua3.utility.ui.RichTextPane;
 import com.dua3.utility.ui.RichTextPaneLayoutHelper;
+import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.RichTextTableHelper;
 import com.dua3.utility.ui.RichTextTableRenderer;
-import com.dua3.utility.ui.RichTextRenderer;
 import com.dua3.utility.ui.RichTextVisualLayoutHelper;
 import com.dua3.utility.ui.VAnchor;
 import com.dua3.utility.ui.VisualLine;
@@ -61,12 +61,12 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
-import javafx.scene.control.Separator;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Skin;
 import javafx.scene.control.SkinBase;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -995,7 +995,7 @@ public class TextPane extends Control implements RichTextPane {
      *
      * @param run the Run object whose characters are to be checked against the structural marker
      * @return true if all characters in the Run object are the structural marker;
-     *         false otherwise
+     * false otherwise
      */
     private static boolean isStructuralMarker(Run run) {
         final int haystackLength = run.length();
@@ -1525,7 +1525,8 @@ public class TextPane extends Control implements RichTextPane {
 
     private record BlockDecoration(Color backgroundColor, Color borderColor, float borderWidth, float padding) {}
 
-    private record BlockDecorationArea(BlockDecoration decoration, Object blockId, float left, float top, float bottom) {}
+    private record BlockDecorationArea(BlockDecoration decoration, Object blockId, float left, float top,
+                                       float bottom) {}
 
     private record BlockDecorationData(BlockDecoration decoration, Object blockId) {}
 
@@ -1544,6 +1545,7 @@ public class TextPane extends Control implements RichTextPane {
         private final Pane caretLayer = new Pane();
         private final Group scrollContent = new Group(contentPane);
         private final ScrollPane scrollPane = new ScrollPane(scrollContent);
+        private final TiledContentBackground contentBackground = new TiledContentBackground();
         private final VBox editorRoot = new VBox();
         private volatile boolean dirty = true;
         private double lastAvailableWidth = Double.NaN;
@@ -1602,7 +1604,11 @@ public class TextPane extends Control implements RichTextPane {
             );
             dragAutoscrollTimeline.setCycleCount(Animation.INDEFINITE);
 
-            contentPane.getStyleClass().add("content");
+            contentBackground.setMouseTransparent(true);
+            contentPane.widthProperty().addListener((obs, oldValue, newValue) ->
+                    contentBackground.resize(newValue.doubleValue(), contentPane.getHeight()));
+            contentPane.heightProperty().addListener((obs, oldValue, newValue) ->
+                    contentBackground.resize(contentPane.getWidth(), newValue.doubleValue()));
             inlineLayer.setManaged(false);
             selectionLayer.setManaged(false);
             caretLayer.setManaged(false);
@@ -1610,7 +1616,7 @@ public class TextPane extends Control implements RichTextPane {
             caretLayer.setMouseTransparent(true);
             // Keep selection overlay above text and inline nodes so selection stays visible
             // even when text background colors or inline controls are present.
-            contentPane.getChildren().setAll(canvas, inlineLayer, selectionLayer, caretLayer);
+            contentPane.getChildren().setAll(contentBackground, canvas, inlineLayer, selectionLayer, caretLayer);
             contentPane.setMinSize(0.0, 0.0);
             contentPane.setPrefSize(0.0, 0.0);
 
@@ -1796,6 +1802,36 @@ public class TextPane extends Control implements RichTextPane {
             }
 
             updateCaretAnimationState();
+        }
+
+        private static final class TiledContentBackground extends Pane {
+            @Override
+            protected void layoutChildren() {
+                double edge = TiledCanvas.maxLogicalTextureSize();
+                int columns = Math.max(1, (int) Math.ceil(getWidth() / edge));
+                int rows = Math.max(1, (int) Math.ceil(getHeight() / edge));
+                int tileCount = columns * rows;
+                while (getChildren().size() < tileCount) {
+                    Region tile = new Region();
+                    tile.getStyleClass().add("content");
+                    tile.setManaged(false);
+                    tile.setMouseTransparent(true);
+                    getChildren().add(tile);
+                }
+                if (getChildren().size() > tileCount) {
+                    getChildren().remove(tileCount, getChildren().size());
+                }
+                int index = 0;
+                for (int row = 0; row < rows; row++) {
+                    double y = row * edge;
+                    double height = Math.min(edge, getHeight() - y);
+                    for (int column = 0; column < columns; column++) {
+                        double x = column * edge;
+                        double width = Math.min(edge, getWidth() - x);
+                        getChildren().get(index++).resizeRelocate(x, y, width, height);
+                    }
+                }
+            }
         }
 
         private static Button createButton(String text, Node graphic, TextEditorPane editor, Consumer<TextEditorPane> action) {

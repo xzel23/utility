@@ -36,11 +36,7 @@ final class TiledCanvas extends Region {
             return;
         }
 
-        // Prism backs each canvas at the highest output scale of any screen, rounded up.
-        double scale = Math.ceil(Screen.getScreens().stream()
-                .mapToDouble(screen -> Math.max(screen.getOutputScaleX(), screen.getOutputScaleY()))
-                .max().orElse(1.0));
-        double edge = Math.max(1.0, Math.floor(MAX_TEXTURE_SIZE / scale));
+        double edge = maxLogicalTextureSize();
         double right = Math.min(getWidth(), viewport.getMaxX());
         double bottom = Math.min(getHeight(), viewport.getMaxY());
         double left = Math.max(0.0, viewport.getMinX());
@@ -65,6 +61,14 @@ final class TiledCanvas extends Region {
             tiles = visible;
         }
         dirty = false;
+    }
+
+    static double maxLogicalTextureSize() {
+        // Prism backs nodes at the highest output scale of any screen, rounded up.
+        double scale = Math.ceil(Screen.getScreens().stream()
+                .mapToDouble(screen -> Math.max(screen.getOutputScaleX(), screen.getOutputScaleY()))
+                .max().orElse(1.0));
+        return Math.max(1.0, Math.floor(MAX_TEXTURE_SIZE / scale));
     }
 
     private static double tileStart(double coordinate, double edge) {
