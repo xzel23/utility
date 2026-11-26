@@ -12,6 +12,7 @@ import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -53,6 +55,22 @@ class PinBoardTest extends FxTestBase {
 
             // Verify the skin is properly initialized
             assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
+        });
+    }
+
+    @Test
+    void testNodeUpdateAfterDisposal() throws Exception {
+        Method updateNodes = PinBoardSkin.class.getDeclaredMethod("updateNodes");
+        updateNodes.setAccessible(true);
+
+        runOnFxThreadAndWait(() -> {
+            PinBoard pinBoard = new PinBoard();
+            PinBoardSkin skin = new PinBoardSkin(pinBoard);
+            pinBoard.setSkin(skin);
+            pinBoard.dispose();
+
+            // Run the callback that may still be queued when the skin is disposed.
+            assertDoesNotThrow(() -> { updateNodes.invoke(skin); });
         });
     }
 

@@ -91,11 +91,15 @@ class PinBoardSkin extends SkinBase<PinBoard> {
         LOG.trace("updateNodes()");
         PlatformHelper.checkApplicationThread();
 
+        // A queued update can still run after dispose() stops the refresher.
+        PinBoard board = getSkinnable();
+        //noinspection ConstantValue
+        if (board == null) {
+            return;
+        }
+
         refresher.setActive(false);
         try {
-            PlatformHelper.checkApplicationThread();
-
-            PinBoard board = getSkinnable();
             Rectangle2D boardArea = board.getArea();
 
             Rectangle2D viewportInLocal = getViewPortInBoardCoordinates();
