@@ -3,15 +3,19 @@ package com.dua3.utility.fx.controls;
 import javafx.application.Platform;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -193,6 +197,45 @@ class PinBoardTest extends FxTestBase {
             // Verify the skin is properly initialized
             assertInstanceOf(PinBoardSkin.class, pinBoard.getSkin(), "PinBoard should have a PinBoardSkin");
         });
+    }
+
+    @Test
+    void zoomUpdatesVisibleItemsAndCenteringInTheFirstScaledFrame() throws Exception {
+        CompletableFuture<Void> checked = new CompletableFuture<>();
+        runOnFxThreadAndWait(() -> {
+            PinBoard board = new PinBoard();
+            Node firstPage = new Rectangle(900, 800);
+            Node secondPage = new Rectangle(900, 200);
+            PinBoard.Item first = new PinBoard.Item("first", new Rectangle2D(0, 0, 900, 800), () -> firstPage);
+            PinBoard.Item second = new PinBoard.Item("second", new Rectangle2D(0, 800, 900, 200), () -> secondPage);
+            board.pin(List.of(first, second));
+            Scene scene = addToScene(board);
+            ScrollPane scrollPane = (ScrollPane) board.lookup(".scroll-pane");
+            Node pane = ((Group) scrollPane.getContent()).getChildren().getFirst();
+            scene.getRoot().layout();
+            assertTrue(board.getViewPortInBoardCoordinates().getHeight() < second.area().getMinY());
+
+            scene.addPostLayoutPulseListener(new Runnable() {
+                @Override
+                public void run() {
+                    if (pane.getScaleX() != 0.5) {
+                        return;
+                    }
+                    scene.removePostLayoutPulseListener(this);
+                    try {
+                        assertEquals(List.of(first, second), List.copyOf(board.getVisibleItems()));
+                        Rectangle2D viewport = board.getViewPortInBoardCoordinates();
+                        assertEquals((viewport.getWidth() - 900) / 2, firstPage.getTranslateX(), 0.01);
+                        assertEquals((viewport.getHeight() - 1000) / 2 + 800, secondPage.getTranslateY(), 0.01);
+                        checked.complete(null);
+                    } catch (Throwable failure) {
+                        checked.completeExceptionally(failure);
+                    }
+                }
+            });
+            board.setDisplayScale(0.5);
+        });
+        checked.get(10, TimeUnit.SECONDS);
     }
 
     /**

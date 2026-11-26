@@ -436,25 +436,22 @@ class PinBoardSkin extends SkinBase<PinBoard> {
             double oldX = boardArea.getMinX() + oldPos.hValue() * Math.max(0, boardArea.getWidth() - viewportBefore.getWidth());
             double oldY = boardArea.getMinY() + oldPos.vValue() * Math.max(0, boardArea.getHeight() - viewportBefore.getHeight());
 
-            Bounds vp = scrollPane.getViewportBounds();
-            Rectangle2D viewportAfter = new Rectangle2D(
-                    (boardArea.getMinX() - vp.getMinX() / scale),
-                    (boardArea.getMinY() - vp.getMinY() / scale),
-                    vp.getWidth() / scale,
-                    vp.getHeight() / scale
-            );
-
             pane.setScaleX(scale);
             pane.setScaleY(scale);
 
+            // Zoom can show or hide scrollbars. Lay out the scroll pane before
+            // using its new viewport to restore the scroll anchor and place pages.
+            scrollPane.requestLayout();
+            scrollPane.layout();
+            Rectangle2D viewportAfter = getViewPortInBoardCoordinates();
             setScrollPosition(
-                    (oldX - boardArea.getMinX()) / (boardArea.getWidth() - viewportAfter.getWidth()),
-                    (oldY - boardArea.getMinY()) / (boardArea.getHeight() - viewportAfter.getHeight())
+                    calcScrollPosition(oldX - boardArea.getMinX(), 0, boardArea.getWidth(), viewportAfter.getWidth()),
+                    calcScrollPosition(oldY - boardArea.getMinY(), 0, boardArea.getHeight(), viewportAfter.getHeight())
             );
 
-            // Scaling changes the bitmap transform immediately. Update the visible
-            // nodes in the same frame so their translations cannot lag one pulse.
-            refresh();
+            // The regular refresh queue runs outside this pulse, after the scaled
+            // content has already been painted. Update it now instead.
+            updateNodes();
         }
     }
 }

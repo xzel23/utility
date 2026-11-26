@@ -235,6 +235,10 @@ could not be loaded.
 
 ## Changes
 
+## 25.2.4
+
+- fix flickering issues when zooming PinBoard component
+
 ## 25.2.3
 
 - fix JavaFX "invalid texture dimension" exception on HiDPI displays in JavaFX TextPane implementation
