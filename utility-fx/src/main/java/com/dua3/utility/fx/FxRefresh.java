@@ -4,7 +4,9 @@ import javafx.scene.Node;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -34,6 +36,7 @@ public final class FxRefresh {
 
     // synchronization
     private final Semaphore signal = new Semaphore(0);
+    private final CountDownLatch terminated = new CountDownLatch(1);
 
     private static final int STATE_INACTIVE = 0;
     private static final int STATE_ACTIVE = 1;
@@ -95,6 +98,7 @@ public final class FxRefresh {
             }
         }
         state.set(STATE_TERMINATED);
+        terminated.countDown();
 
         LOG.trace("[{}] exiting refresh loop", name);
     }
@@ -105,6 +109,7 @@ public final class FxRefresh {
     public void stop() {
         int newState = state.updateAndGet(st -> Math.max(st, STATE_TERMINATING));
         LOG.trace("[{}] stop() - state changed to {}", name, newState);
+        signal.release();
     }
 
     /**
@@ -203,6 +208,10 @@ public final class FxRefresh {
      */
     public boolean isRunning() {
         return state.get() < STATE_TERMINATING;
+    }
+
+    boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        return terminated.await(timeout, unit);
     }
 
     /**

@@ -53,6 +53,16 @@ class FxRefreshTest extends FxTestBase {
     }
 
     @Test
+    void testStopTerminatesIdleRefresher() throws InterruptedException {
+        FxRefresh refresher = FxRefresh.create("TestRefresher", () -> {});
+
+        refresher.stop();
+
+        Assertions.assertTrue(refresher.awaitTermination(5, TimeUnit.SECONDS),
+                "Idle refresher should terminate after stop");
+    }
+
+    @Test
     void testCreateWithNode() throws Throwable {
         runOnFxThreadAndWait(() -> {
             AtomicBoolean taskExecuted = new AtomicBoolean(false);
