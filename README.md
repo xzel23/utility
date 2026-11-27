@@ -235,6 +235,13 @@ could not be loaded.
 
 ## Changes
 
+## 25.2.5
+
+- set scrollbar opacity to 1 in PinboardSkin to prevent invalid texture dimension exception when using large PinBoard 
+  instances
+- fix FxRefresh not terminating when in idle state
+- fix NPE in PinBoardSkin when a pending updateNodes() is executed after dispose()
+
 ## 25.2.4
 
 - fix flickering issues when zooming PinBoard component
