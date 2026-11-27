@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 class PinBoardSkin extends SkinBase<PinBoard> {
@@ -36,6 +37,11 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
     PinBoardSkin(PinBoard pinBoard) {
         super(pinBoard);
+
+        scrollPane.getStylesheets().add(Objects.requireNonNull(
+                PinBoardSkin.class.getResource("pin-board.css")
+        ).toExternalForm());
+        scrollPane.getStyleClass().add("pin-board-scroll-pane");
 
         this.refresher = FxRefresh.create(
                 LangUtil.defaultToString(this),
