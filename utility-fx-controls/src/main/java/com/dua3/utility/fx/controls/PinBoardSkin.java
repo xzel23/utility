@@ -93,7 +93,7 @@ class PinBoardSkin extends SkinBase<PinBoard> {
 
         // A queued update can still run after dispose() stops the refresher.
         PinBoard board = getSkinnable();
-        //noinspection ConstantValue
+        //noinspection ConstantValue - code can be called after the control is set to null in dispose()
         if (board == null) {
             return;
         }
